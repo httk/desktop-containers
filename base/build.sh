@@ -4,7 +4,8 @@ set -e
 
 BASE="ubuntu:24.04"
 
-LOCALES="$(locale -a | grep -v "POSIX" | tr '\n' ' ')"
+# The sed 's/.utf8/.UTF-8/' fixes incorrectly specified locales from pre-GNOME 3.18 I think.
+LOCALES="$(locale -a | grep -v "POSIX" | sed 's/.utf8/.UTF-8/' | tr '\n' ' ')"
 
 cat > ./Containerfile <<EOF
 FROM $BASE
@@ -12,11 +13,13 @@ RUN dpkg --add-architecture i386
 RUN apt-get update
 RUN apt-get -y dist-upgrade
 RUN apt-get -y install locales nano git wget
+COPY en_SE.locale /tmp/en_SE.locale
+RUN test ! -e /usr/share/i18n/locales/en_SE && cp /tmp/en_SE.locale /usr/share/i18n/locales/en_SE && localedef -i en_SE -f UTF-8 en_SE.UTF-8 && echo "# en_SE.UTF-8 UTF-8" >> "/etc/locale.gen"
 RUN locale-gen ${LOCALES}
-RUN update-locale
+RUN update-locale "LANG=$LANG"
 ENV LANG $LANG
 RUN groupadd -r -g 5000 build
-RUN useradd -m -u 5000 -g 5000 -c "Build user" "build" 
+RUN useradd -m -u 5000 -g 5000 -c "Build user" "build"
 EOF
 
 FULLNAME="$(getent passwd rar | awk -F':' '{print $5}')"
