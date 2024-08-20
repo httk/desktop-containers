@@ -5,7 +5,7 @@ FROM wrap-base-img
 USER root
 RUN apt-get update
 RUN apt-get -y dist-upgrade
-RUN apt-get -y install term mesa-utils libx11-data x11-utils
+RUN apt-get -y install xterm mesa-utils libx11-data x11-utils
 USER "$USER"
 EOF
 

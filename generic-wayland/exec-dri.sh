@@ -7,6 +7,14 @@ if [ ! -e ./image.info ]; then
     exit 1
 fi
 
+FIXES=""
+
+CRUNVER="$(crun --version | awk '/crun version /{print $3}')"
+if ! sort -C -V <<< $'1.9.1\n'"$CRUNVER"; then
+    FIXES="$FIXES --read-only=false"
+    echo "Warning: read-only turned off due to old version of crun."
+fi
+
 IMAGE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)
 
 podman run --rm \
@@ -18,11 +26,11 @@ podman run --rm \
        --systemd=false \
        --security-opt=no-new-privileges \
        -e LANG \
-	--userns=keep-id \
-	-e WAYLAND_DISPLAY \
-	-e XDG_RUNTIME_DIR=/tmp \
-	--userns=keep-id \
-	-v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$WAYLAND_DISPLAY:ro" \
-	-v /dev/dri:/dev/dri \
-	-v "$IMAGE_DIR/home:/home/$USER:rw" \
-        "$(cat image.info)" "$@"
+       -e WAYLAND_DISPLAY \
+       -e XDG_RUNTIME_DIR=/tmp \
+       --userns=keep-id \
+       -v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$WAYLAND_DISPLAY:ro" \
+       -v /dev/dri:/dev/dri \
+       -v "$IMAGE_DIR/home:/home/$USER:rw" \
+       $FIXES \
+       "$(cat image.info)" "$@"
