@@ -27,3 +27,8 @@ echo
 echo "Good test:"
 echo "  ./exec-steam.sh"
 echo ""
+echo "Note: fullsceen mode does not work reliably on GNOME"
+echo "Go into the GNOME keyboard configuration and enable"
+echo "a shortcut for fullscreen. Use ./exec-steam-fullscreen.sh,"
+echo "but if you get window decorations, use the shortcut to"
+echo "get rid of them."

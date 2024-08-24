@@ -25,11 +25,12 @@ podman run --rm \
        --read-only-tmpfs \
        --systemd=false \
        -e LANG \
-	--userns=keep-id \
-	-e WAYLAND_DISPLAY \
-	-e XDG_RUNTIME_DIR="/tmp/$USER" \
-	--userns=keep-id \
-	-v /dev/dri:/dev/dri \
-	-v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$USER/$WAYLAND_DISPLAY:ro" \
-	-v "$IMAGE_DIR/home:/home/$USER:rw" \
-        "$(cat image.info)" "$@"
+       --userns=keep-id \
+       -e WAYLAND_DISPLAY \
+       -e XDG_RUNTIME_DIR="/tmp/$USER" \
+       --userns=keep-id \
+       -v /dev/dri:/dev/dri \
+       -v /dev/snd:/dev/snd \
+       -v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$USER/$WAYLAND_DISPLAY:ro" \
+       -v "$IMAGE_DIR/home:/home/$USER:rw" \
+       "$(cat image.info)" "$@"

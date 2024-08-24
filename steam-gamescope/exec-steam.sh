@@ -9,17 +9,23 @@ fi
 
 IMAGE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)
 
+WIDTH=$(xdpyinfo | awk '/dimensions/ {print $2}' | awk -Fx '{print int(0.85*$1)}')
+HEIGHT=$(xdpyinfo | awk '/dimensions/ {print $2}' | awk -Fx '{print int(0.85*$2)}')
+
+echo "Executing steam at resolution $WIDTH x $HEIGHT"
+
 podman run --rm \
        --user="$USER" \
        --hostname="$(cat image.info)" \
        --shm-size=256M \
        --cap-drop=ALL \
-       --cap-add SETGID \
-       --cap-add SETUID \
-       --cap-add SYS_CHROOT \
-       --cap-add SYS_PTRACE \
-       --cap-add=NET_ADMIN \
-       --cap-add=SYS_ADMIN \
+       --cap-add CAP_SYS_NICE \
+       --cap-add CAP_SETGID \
+       --cap-add CAP_SETUID \
+       --cap-add CAP_SYS_CHROOT \
+       --cap-add CAP_SYS_PTRACE \
+       --cap-add CAP_NET_ADMIN \
+       --cap-add CAP_SYS_ADMIN \
        --read-only \
        --read-only-tmpfs \
        --systemd=false \
@@ -27,12 +33,17 @@ podman run --rm \
 	--userns=keep-id \
 	-e WAYLAND_DISPLAY \
 	-e XDG_RUNTIME_DIR="/tmp/$USER" \
+	-e STEAM_USE_MANGOAPP=1 \
+	-e SRT_URLOPEN_PREFER_STEAM=1 \
+	-e STEAM_MULTIPLE_XWAYLANDS=1 \
+	-e STEAM_ENABLE_VOLUME_HANDLER=1 \
 	-e vblank_mode \
 	--userns=keep-id \
 	-v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$USER/$WAYLAND_DISPLAY:ro" \
 	-v /dev/dri:/dev/dri \
+	-v /dev/snd:/dev/snd \
 	-v "$IMAGE_DIR/home:/home/$USER:rw" \
-        "$(cat image.info)" gamescope-exec /usr/games/steam "$@"
+        "$(cat image.info)" gamescope-exec --adaptive-sync --hdr-enabled --rt -S integer -e -W "$WIDTH" -H "$HEIGHT" --immediate-flips -- /usr/games/steam "$@"
 
 
 #       --cap-add=CAP_FOWNER \
