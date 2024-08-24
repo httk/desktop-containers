@@ -3,11 +3,9 @@
 cat > Containerfile <<EOF
 FROM wrap-base-img
 USER root
-RUN apt-get update
-RUN apt-get -y dist-upgrade
-RUN apt-get -y install xterm mesa-utils libx11-data x11-utils
-RUN apt-get -y install foot xwayland openbox
-RUN mkdir -p /tmp/.X11-unix && chmod a+rwxt /tmp/.X11-unix
+RUN apt-get update && apt-get -y dist-upgrade
+RUN apt-get -y install xterm mesa-utils libx11-data x11-utils foot xwayland openbox && mkdir -p /tmp/.X11-unix && chmod a+rwxt /tmp/.X11-unix
+RUN apt-get -y install --no-install-recommends pulseaudio alsa-utils libasound2-plugins
 COPY ./xwayland-exec /usr/bin/xwayland-exec
 RUN chmod +x /usr/bin/xwayland-exec
 USER "$USER"

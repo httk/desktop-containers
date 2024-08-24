@@ -17,7 +17,7 @@ if [ -n "$1" ]; then
   podman run \
        --user=root \
        --name=wrap-upgrade-tmp \
-       --hostname="$(cat image.info)" \
+       --hostname=wrapconsole \
        --cap-drop=ALL \
        --cap-add=CAP_FOWNER \
        --cap-add=CAP_CHOWN \
@@ -37,7 +37,7 @@ else
        -it \
        --user=root \
        --name=wrap-upgrade-tmp \
-       --hostname="$(cat image.info)" \
+       --hostname=wrapconsole \
        --cap-drop=ALL \
        --cap-add=CAP_FOWNER \
        --cap-add=CAP_CHOWN \
