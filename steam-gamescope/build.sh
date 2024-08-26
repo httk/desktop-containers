@@ -20,6 +20,9 @@ echo "wrap-steam-img" > image.info
 
 ./modify.sh bash -c "su build -c 'git clone https://github.com/ValveSoftware/gamescope.git /opt/gamescope/build && cd /opt/gamescope/build && git checkout 3.13.16.9 && git submodule update --init && meson build/ && ninja -C build/' && cd /opt/gamescope/build && meson install -C build/ --skip-subprojects"
 
+# Workaround for the fact that gamescope is not installable in ubuntu 24.04
+./exec-bare.sh bash -c "cp /usr/local/bin/gamescope ~/gamescope"
+
 #./modify.sh bash -c "wget -O ~/steam.deb http://media.steampowered.com/client/installer/steam.deb && apt -y install ~/steam.deb && rm ~/steam.deb"
 
 echo "Image built. Note, first execution may be very slow to start."
@@ -27,8 +30,17 @@ echo
 echo "Good test:"
 echo "  ./exec-steam.sh"
 echo ""
-echo "Note: fullsceen mode does not work reliably on GNOME"
-echo "Go into the GNOME keyboard configuration and enable"
-echo "a shortcut for fullscreen. Use ./exec-steam-fullscreen.sh,"
-echo "but if you get window decorations, use the shortcut to"
-echo "get rid of them."
+echo "Notes:"
+echo " 1. Fullsceen mode does not work reliably on GNOME"
+echo "    Go into the GNOME keyboard configuration and enable"
+echo "    a shortcut for fullscreen. Use ./exec-steam-fullscreen.sh,"
+echo "    but if you get window decorations, use the shortcut to"
+echo "    get rid of them."
+echo
+echo " 2. If you want to use exec-steam-vc.sh, you need a copy of gamescope on the host."
+echo "    As part of building this image, gamescope of extracted into home/gamescope."
+echo "    But, you may need to install libraries, e.g., apt install libsdl2-2.0-0 libseat1"
+echo "    Just try to execute it, and install necessary libraries until it works."
+echo ""
+echo "    To use exec-steam-vc.sh, switch to another Linux virtual console (e.g., ctrl+alt+f5)"
+echo "    Log in, then run exec-steam-vc.sh to launch Steam in the virtual console."
