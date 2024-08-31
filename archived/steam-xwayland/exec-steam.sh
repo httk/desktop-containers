@@ -12,7 +12,7 @@ IMAGE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)
 podman run --rm \
        --user="$USER" \
        --hostname="$(cat image.info)" \
-       --shm-size=256M \
+       --shm-size=512M \
        --cap-drop=ALL \
        --cap-add SETGID \
        --cap-add SETUID \

@@ -23,7 +23,7 @@ podman build -t "wrap-${WRAP_NAME}-img" --label=wrap .
 echo "wrap-${WRAP_NAME}-img" > image.info
 mkdir -p home
 
-rm gamescope.tgz
+./modify.sh bash -c "su build -c 'git clone https://github.com/ValveSoftware/gamescope.git /opt/gamescope/build && cd /opt/gamescope/build && git checkout 3.13.16.9 && git submodule update --init && meson build/ && ninja -C build/' && cd /opt/gamescope/build && meson install -C build/ --skip-subprojects"
 
 echo "Image built. Note, first execution may be very slow to start."
 echo "For more info, see README.md"

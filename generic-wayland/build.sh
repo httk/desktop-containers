@@ -3,28 +3,16 @@
 cat > Containerfile <<EOF
 FROM wrap-base-img
 USER root
-RUN apt-get update
-RUN apt-get -y dist-upgrade
+RUN apt-get update && apt-get -y dist-upgrade
+RUN apt-get -y install --no-install-recommends pulseaudio alsa-utils libasound2-plugins
 RUN apt-get -y install foot libx11-data weston
 USER "$USER"
 EOF
 
-podman build -t wrap-generic-wayland-img .
-
-echo "wrap-generic-wayland-img" > image.info
+WRAP_NAME="wrap-$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && basename "$(pwd -P)" )-img"
+podman build -t "wrap-${WRAP_NAME}-img" --label=wrap .
+echo "wrap-${WRAP_NAME}-img" > image.info
+mkdir -p home
 
 echo "Image built. Note, first execution may be very slow to start."
-echo
-echo "Good test:"
-echo "  ./exec-nodri.sh weston-simple-egl"
-echo "  ./exec-dri.sh weston-simple-egl"
-echo ""
-echo "To get a terminal inside the container use:"
-echo "  ./exec.sh foot"
-echo "  ./exec.sh weston-terminal"
-echo
-echo "Helpful debug variables that can be set"
-echo "  export MESA_DEBUG=1"
-echo "  export EGL_LOG_LEVEL=debug"
-echo "  export LIBGL_DEBUG=verbose"
-echo "  export WAYLAND_DEBUG=1"
+echo "For more info, see README.md"
