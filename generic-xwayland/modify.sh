@@ -8,16 +8,21 @@ if [ ! -e ./image.info ]; then
 fi
 
 WRAP_NAME="wrap-$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && basename "$(pwd -P)" )-img"
+IMAGE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)
+IMAGE_NAME="$(cat image.info)"
+NAME=${IMAGE_NAME%-img}
+NAME=${NAME#wrap-}
 
 echo "Modifying wrap image from $(cat image.info) -> ${WRAP_NAME}"
 
 podman rm -fi wrap-upgrade-tmp 
 
-podman run \
-       -it \
+if [ -n "$1" ]; then
+  podman run \
+       -w "/" \
+       --hostname="$NAME" \
        --user=root \
        --name=wrap-upgrade-tmp \
-       --hostname=wrapconsole \
        --cap-drop=ALL \
        --cap-add=CAP_FOWNER \
        --cap-add=CAP_CHOWN \
@@ -31,8 +36,30 @@ podman run \
        --security-opt=no-new-privileges \
        --userns=keep-id \
        -e LANG \
-       "$(cat image.info)" /bin/bash
-
+       "$IMAGE_NAME" "$@"
+else
+  podman run \
+       -it \
+       -w "/" \
+       --hostname="$NAME" \
+       --user=root \
+       --name=wrap-upgrade-tmp \
+       --cap-drop=ALL \
+       --cap-add=CAP_FOWNER \
+       --cap-add=CAP_CHOWN \
+       --cap-add=CAP_DAC_OVERRIDE \
+       --cap-add=CAP_DAC_READ_SEARCH \
+       --cap-add=CAP_SETUID \
+       --cap-add=CAP_SETGID \
+       --read-only=false \
+       --read-only-tmpfs \
+       --systemd=false \
+       --security-opt=no-new-privileges \
+       --userns=keep-id \
+       -e LANG \
+       "$IMAGE_NAME" /bin/bash
+fi
+  
 podman commit wrap-upgrade-tmp "$WRAP_NAME"
 echo "$WRAP_NAME" > image.info
 

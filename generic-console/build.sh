@@ -8,9 +8,9 @@ RUN apt-get -y dist-upgrade
 USER "$USER"
 EOF
 
-WRAP_NAME="wrap-$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && basename "$(pwd -P)" )-img"
-podman build -t "wrap-${WRAP_NAME}-img" --label=wrap .
-echo "wrap-${WRAP_NAME}-img" > image.info
+NAME="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && basename "$(pwd -P)" )"
+podman build -t "wrap-${NAME}-img" --label=wrap .
+echo "wrap-${NAME}-img" > image.info
 mkdir -p home
 
 echo "Image built. Note, first execution may be very slow to start."

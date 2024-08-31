@@ -6,3 +6,4 @@ buildah rm --all
 podman rmi $(podman images --filter label=wrap -q)
 
 # Could also do: podman system prune
+# Or even: podman system reset

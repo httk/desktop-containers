@@ -8,6 +8,9 @@ if [ ! -e ./image.info ]; then
 fi
 
 IMAGE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)
+IMAGE_NAME="$(cat image.info)"
+NAME=${IMAGE_NAME%-img}
+NAME=${NAME#wrap-}
 
 WIDTH=$(xdpyinfo | awk '/dimensions/ {print $2}' | awk -Fx '{print int($1)}')
 HEIGHT=$(xdpyinfo | awk '/dimensions/ {print $2}' | awk -Fx '{print int($2)}')
@@ -66,7 +69,7 @@ home/gamescope --adaptive-sync --rt -S integer -e -- podman run --rm \
        -v /dev/dri:/dev/dri \
        --device=/dev/snd:/dev/snd \
        -v "$IMAGE_DIR/home:/home/$USER:rw" \
-       "$(cat image.info)" /usr/games/steam
+       "$IMAGE_NAME" /usr/games/steam
 
 # /usr/games/steam "$@"
 

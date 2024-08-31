@@ -1,6 +1,12 @@
 #!/bin/bash
 
-for DIR in base generic-*/build.sh; do
+(
+    cd base
+    ./build.sh
+    ./build-gamescope.sh
+)    
+
+for DIR in generic-*/build.sh; do
     (
 	cd $(dirname "$DIR")
 	./build.sh
@@ -9,7 +15,7 @@ done
 
 for DIR in */build.sh; do
 
-    if [ "${HOST:0:7}" = "generic" ]; then
+    if [ "$DIR" == "base" -o "${DIR:0:7}" = "generic" ]; then
 	continue
     fi
     (

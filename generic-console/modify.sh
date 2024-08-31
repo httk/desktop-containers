@@ -8,6 +8,10 @@ if [ ! -e ./image.info ]; then
 fi
 
 WRAP_NAME="wrap-$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && basename "$(pwd -P)" )-img"
+IMAGE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)
+IMAGE_NAME="$(cat image.info)"
+NAME=${IMAGE_NAME%-img}
+NAME=${NAME#wrap-}
 
 echo "Modifying wrap image from $(cat image.info) -> ${WRAP_NAME}"
 
@@ -15,9 +19,10 @@ podman rm -fi wrap-upgrade-tmp
 
 if [ -n "$1" ]; then
   podman run \
+       -w "/" \
+       --hostname="$NAME" \
        --user=root \
        --name=wrap-upgrade-tmp \
-       --hostname="$(cat image.info)" \
        --cap-drop=ALL \
        --cap-add=CAP_FOWNER \
        --cap-add=CAP_CHOWN \
@@ -31,13 +36,14 @@ if [ -n "$1" ]; then
        --security-opt=no-new-privileges \
        --userns=keep-id \
        -e LANG \
-       "$(cat image.info)" "$@"
+       "$IMAGE_NAME" "$@"
 else
   podman run \
        -it \
+       -w "/" \
+       --hostname="$NAME" \
        --user=root \
        --name=wrap-upgrade-tmp \
-       --hostname="$(cat image.info)" \
        --cap-drop=ALL \
        --cap-add=CAP_FOWNER \
        --cap-add=CAP_CHOWN \
@@ -51,7 +57,7 @@ else
        --security-opt=no-new-privileges \
        --userns=keep-id \
        -e LANG \
-       "$(cat image.info)" /bin/bash
+       "$IMAGE_NAME" /bin/bash
 fi
   
 podman commit wrap-upgrade-tmp "$WRAP_NAME"

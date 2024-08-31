@@ -10,8 +10,9 @@ fi
 IMAGE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)
 
 podman run --rm \
+       -w "/home/$USER" \
+       --hostname="$NAME" \
        --user="$USER" \
-       --hostname="$(cat image.info)" \
        --cap-drop=ALL \
        --read-only \
        --read-only-tmpfs \
@@ -25,4 +26,4 @@ podman run --rm \
 	-v /dev/dri:/dev/dri \
 	-v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$WAYLAND_DISPLAY:ro" \
 	-v "$IMAGE_DIR/home:/home/$USER:rw" \
-        "$(cat image.info)" "$@"
+        "$IMAGE_NAME" "$@"

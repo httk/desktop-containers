@@ -8,9 +8,15 @@ if [ ! -e ./image.info ]; then
 fi
 
 IMAGE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)
+IMAGE_NAME="$(cat image.info)"
+NAME=${IMAGE_NAME%-img}
+NAME=${NAME#wrap-}
+
 #       --security-opt=no-new-privileges \
 
 podman run --rm \
+       -w "/home/$USER" \
+       --hostname="$NAME" \
        --user="$USER" \
        --hostname="$(cat image.info)" \
        --shm-size=256M \
@@ -33,4 +39,4 @@ podman run --rm \
        -v /dev/snd:/dev/snd \
        -v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$USER/$WAYLAND_DISPLAY:ro" \
        -v "$IMAGE_DIR/home:/home/$USER:rw" \
-       "$(cat image.info)" "$@"
+       "$IMAGE_NAME" "$@"

@@ -15,8 +15,9 @@ HEIGHT=$(xdpyinfo | awk '/dimensions/ {print $2}' | awk -Fx '{print int(0.85*$2)
 echo "Executing steam at resolution $WIDTH x $HEIGHT"
 
 podman run --rm \
+       -w "/home/$USER" \
+       --hostname="$NAME" \
        --user="$USER" \
-       --hostname="$(cat image.info)" \
        --shm-size=512M \
        --cap-drop=ALL \
        --cap-add CAP_SYS_NICE \
@@ -42,7 +43,7 @@ podman run --rm \
 	-v /dev/dri:/dev/dri \
        --device=/dev/snd:/dev/snd \
 	-v "$IMAGE_DIR/home:/home/$USER:rw" \
-        "$(cat image.info)" gamescope-exec --adaptive-sync --hdr-enabled --rt -S integer -e -W "$WIDTH" -H "$HEIGHT" -- /usr/games/steam "$@"
+        "$IMAGE_NAME" gamescope-exec --adaptive-sync --hdr-enabled --rt -S integer -e -W "$WIDTH" -H "$HEIGHT" -- /usr/games/steam "$@"
 
 
 #       --cap-add=CAP_FOWNER \
