@@ -17,7 +17,7 @@ echo "Executing steam at resolution $WIDTH x $HEIGHT"
 podman run --rm \
        --user="$USER" \
        --hostname="$(cat image.info)" \
-       --shm-size=256M \
+       --shm-size=512M \
        --cap-drop=ALL \
        --cap-add CAP_SYS_NICE \
        --cap-add CAP_SETGID \
@@ -35,15 +35,14 @@ podman run --rm \
 	-e XDG_RUNTIME_DIR="/tmp/$USER" \
 	-e STEAM_USE_MANGOAPP=1 \
 	-e SRT_URLOPEN_PREFER_STEAM=1 \
-	-e STEAM_MULTIPLE_XWAYLANDS=1 \
 	-e STEAM_ENABLE_VOLUME_HANDLER=1 \
 	-e vblank_mode \
 	--userns=keep-id \
 	-v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$USER/$WAYLAND_DISPLAY:ro" \
 	-v /dev/dri:/dev/dri \
-	-v /dev/snd:/dev/snd \
+       --device=/dev/snd:/dev/snd \
 	-v "$IMAGE_DIR/home:/home/$USER:rw" \
-        "$(cat image.info)" gamescope-exec --adaptive-sync --hdr-enabled --rt -S integer -e -W "$WIDTH" -H "$HEIGHT" --immediate-flips -- /usr/games/steam "$@"
+        "$(cat image.info)" gamescope-exec --adaptive-sync --hdr-enabled --rt -S integer -e -W "$WIDTH" -H "$HEIGHT" -- /usr/games/steam "$@"
 
 
 #       --cap-add=CAP_FOWNER \
