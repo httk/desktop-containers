@@ -24,14 +24,23 @@ podman run --rm \
        -w "/home/$USER" \
        --hostname="$NAME" \
        --user="$USER" \
+       --shm-size=512M \
        --cap-drop=ALL \
+       --cap-add=CAP_SYS_CHROOT \
        --read-only \
        --read-only-tmpfs \
        --systemd=false \
        --security-opt=no-new-privileges \
        -e LANG \
+       -e XDG_RUNTIME_DIR="/tmp/$USER" \
+       -e XDG_CONFIG_HOME="$HOME/.config" \
+       -e WINDOWID \
+       -e TERM=xterm \
+       -e XTERM_LOCALE=en_US.UTF-8 \
+       -e XTERM_SHELL=/usr/bin/bash \
        -v /tmp/.X11-unix:/tmp/.X11-unix \
        -e DISPLAY \
+       -e BROSER="falkon" \
        -v $XAUTHORITY:$XAUTHORITY \
        -e XAUTHORITY \
        -e vblank_mode \
@@ -39,4 +48,4 @@ podman run --rm \
        -v /dev/dri:/dev/dri \
        -v "$IMAGE_DIR/home:/home/$USER:rw" \
        $FIXES \
-       "$IMAGE_NAME" "$@"
+       "$IMAGE_NAME" xterm -iconic -e zoom "$@"

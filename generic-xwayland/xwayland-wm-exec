@@ -13,8 +13,6 @@ for sig in INT QUIT HUP TERM; do
 done
 trap cleanup EXIT
 
-# Ideas from https://bennett.dev/rootful-xwayland/
-
 file=$(mktemp)
 NEW_DISPLAY=:101
 
@@ -25,8 +23,8 @@ cat >> $file <<EOF
 <openbox_config>
 	<applications>
 		<application title="*">
-		  <decor>no</decor>
-			<fullscreen>yes</fullscreen>
+		  <decor>yes</decor>
+			<fullscreen>no</fullscreen>
 			<maximized>yes</maximized>
 		</application>
 	</applications>

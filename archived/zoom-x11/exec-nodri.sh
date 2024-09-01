@@ -29,14 +29,14 @@ podman run --rm \
        --read-only-tmpfs \
        --systemd=false \
        --security-opt=no-new-privileges \
-       -e LANG \
-       -v /tmp/.X11-unix:/tmp/.X11-unix \
-       -e DISPLAY \
-       -v $XAUTHORITY:$XAUTHORITY \
-       -e XAUTHORITY \
-       -e vblank_mode \
-       --userns=keep-id \
-       -v /dev/dri:/dev/dri \
-       -v "$IMAGE_DIR/home:/home/$USER:rw" \
-       $FIXES \
+	-e LANG \
+	--userns=keep-id \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+	-e DISPLAY \
+	-v "$XAUTHORITY:$XAUTHORITY" \
+	-e XAUTHORITY \
+	-e vblank_mode \
+	--userns=keep-id \
+	-v "$IMAGE_DIR/home:/home/$USER:rw" \
+        $FIXES \
        "$IMAGE_NAME" "$@"

@@ -25,13 +25,17 @@ podman run --rm \
        --hostname="$NAME" \
        --user="$USER" \
        --cap-drop=ALL \
+       --cap-add=sys_chroot \
        --read-only \
        --read-only-tmpfs \
        --systemd=false \
        --security-opt=no-new-privileges \
        -e LANG \
+       -e XDG_RUNTIME_DIR="/tmp/$USER" \
+       -e XDG_CONFIG_HOME="$HOME/.config" \
        -v /tmp/.X11-unix:/tmp/.X11-unix \
        -e DISPLAY \
+       -e BROSER="falkon" \
        -v $XAUTHORITY:$XAUTHORITY \
        -e XAUTHORITY \
        -e vblank_mode \

@@ -16,9 +16,6 @@ if ! sort -C -V <<< $'1.9.1\n'"$CRUNVER"; then
 fi
 
 IMAGE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)
-IMAGE_NAME="$(cat image.info)"
-NAME=${IMAGE_NAME%-img}
-NAME=${NAME#wrap-}
 
 podman run --rm \
        -w "/home/$USER" \

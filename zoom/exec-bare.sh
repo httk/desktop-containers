@@ -20,23 +20,34 @@ IMAGE_NAME="$(cat image.info)"
 NAME=${IMAGE_NAME%-img}
 NAME=${NAME#wrap-}
 
+VIDEO_DEVS=""
+for DEV in /dev/video*; do
+    if [ -c $DEV ]; then
+      VIDEO_DEVS="--device $DEV $VIDEO_DEVS"
+    fi
+done
+
 podman run --rm \
        -w "/home/$USER" \
        --hostname="$NAME" \
+       --name="$NAME" \
        --user="$USER" \
        --cap-drop=ALL \
+       --cap-add sys_chroot \
        --read-only \
        --read-only-tmpfs \
        --systemd=false \
        --security-opt=no-new-privileges \
        -e LANG \
-       -v /tmp/.X11-unix:/tmp/.X11-unix \
-       -e DISPLAY \
-       -v $XAUTHORITY:$XAUTHORITY \
-       -e XAUTHORITY \
-       -e vblank_mode \
-       --userns=keep-id \
-       -v /dev/dri:/dev/dri \
-       -v "$IMAGE_DIR/home:/home/$USER:rw" \
-       $FIXES \
-       "$IMAGE_NAME" "$@"
+	--userns=keep-id \
+	-e WAYLAND_DISPLAY \
+	-e XDG_RUNTIME_DIR="/tmp/$USER" \
+	--userns=keep-id \
+	--device /dev/dri \
+	--device /dev/snd \
+	-v "$XDG_RUNTIME_DIR/pipewire-0:/tmp/$USER/pipewire-0" \
+	-v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$USER/$WAYLAND_DISPLAY:ro" \
+	-v "$IMAGE_DIR/home:/home/$USER:rw" \
+	$VIDEO_DEVS \
+        $FIXES \
+        "$IMAGE_NAME" "$@"

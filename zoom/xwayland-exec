@@ -18,9 +18,6 @@ trap cleanup EXIT
 file=$(mktemp)
 NEW_DISPLAY=:101
 
-WIDTH=$(xdpyinfo | awk '/dimensions/ {print $2}' | awk -Fx '{print int(0.85*$1)}')
-HEIGHT=$(xdpyinfo | awk '/dimensions/ {print $2}' | awk -Fx '{print int(0.85*$2)}')
-
 cat >> $file <<EOF
 <openbox_config>
 	<applications>
@@ -33,7 +30,7 @@ cat >> $file <<EOF
 </openbox_config>
 EOF
 
-Xwayland -noreset -decorate -geometry "$WDITHx$HEIGHT" "$NEW_DISPLAY" &
+Xwayland -noreset -decorate "$NEW_DISPLAY" &
 export DISPLAY="$NEW_DISPLAY"
 while ! xdpyinfo >/dev/null 2>&1; do sleep 0.5s; done
 openbox --replace --config-file $file &

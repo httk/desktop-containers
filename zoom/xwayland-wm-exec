@@ -1,0 +1,24 @@
+#!/bin/bash
+
+cleanup() {
+    # kill all processes whose parent is this process
+    pkill -P $$
+}
+
+for sig in INT QUIT HUP TERM; do
+  trap "
+    cleanup
+    trap - $sig EXIT
+    kill -s $sig "'"$$"' "$sig"
+done
+trap cleanup EXIT
+
+NEW_DISPLAY=:101
+
+Xwayland -noreset -decorate "$NEW_DISPLAY" &
+export DISPLAY="$NEW_DISPLAY"
+while ! xdpyinfo >/dev/null 2>&1; do sleep 0.5s; done
+openbox --replace &
+sleep 0.5
+"$@"
+openbox --kill

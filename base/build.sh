@@ -10,7 +10,7 @@ LOCALES="$(locale -a | grep -v "POSIX" | sed 's/.utf8/.UTF-8/' | tr '\n' ' ')"
 cat > ./Containerfile <<EOF
 FROM $BASE
 RUN apt-get update && apt-get -y dist-upgrade && apt-get install -y --reinstall ca-certificates 
-RUN apt-get -y --no-install-recommends install locales nano wget bash curl git jq less net-tools p7zip-full patch pciutils pkg-config procps psmisc psutils rsync screen unzip xmlstarlet xz-utils python3 python3-pip python3-setuptools python3-venv libx11-data && apt-get clean autoclean -y && apt-get autoremove -y && rm -rf /var/tmp/* && rm -rf /tmp/*
+RUN apt-get -y --no-install-recommends install locales nano wget bash curl git jq less net-tools p7zip-full patch pciutils pkg-config procps psmisc psutils rsync screen unzip xmlstarlet xz-utils python3 python3-pip python3-setuptools python3-venv libx11-data gpg gpg-agent xdg-utils iproute2 pipewire pipewire-alsa pipewire-pulse alsa-utils && apt-get clean autoclean -y && apt-get autoremove -y && rm -rf /var/tmp/* && rm -rf /tmp/*
 COPY en_SE.locale /tmp/en_SE.locale
 RUN test ! -e /usr/share/i18n/locales/en_SE && cp /tmp/en_SE.locale /usr/share/i18n/locales/en_SE && localedef -i en_SE -f UTF-8 en_SE.UTF-8 && echo "# en_SE.UTF-8 UTF-8" >> "/etc/locale.gen" && locale-gen ${LOCALES} && update-locale "LANG=$LANG"
 ENV LANG $LANG
@@ -23,14 +23,14 @@ FULLNAME="$(getent passwd rar | awk -F':' '{print $5}')"
 if [ "$UID" == "1000" ]; then
 
     cat >> Containerfile <<EOF
-RUN usermod -l "$USER" ubuntu && groupmod -n "$USER" ubuntu && usermod -d "/home/$USER" -m "$USER" && usermod -c "$FULLNAME" "$USER" && mkdir /tmp/$USER && chown "$USER:$USER" "/tmp/$USER"
+RUN usermod -l "$USER" ubuntu && groupmod -n "$USER" ubuntu && usermod -d "/home/$USER" -m "$USER" && usermod -c "$FULLNAME" "$USER" && mkdir /tmp/$USER && chown "$USER:$USER" "/tmp/$USER" && chmod 0700 "/tmp/$USER"
 USER $USER
 EOF
 
 else
 
     cat >> Containerfile <<EOF
-RUN groupadd -r -g "$UID" "$USER" && useradd -m -u "$UID" -g "$UID" -c "$FULLNAME" "$USER" && mkdir /tmp/$USER && chown "$USER:$USER" "/tmp/$USER"
+RUN groupadd -r -g "$UID" "$USER" && useradd -m -u "$UID" -g "$UID" -c "$FULLNAME" "$USER" && mkdir /tmp/$USER && chown "$USER:$USER" "/tmp/$USER" && chmod 0700 "/tmp/$USER"
 USER $USER
 EOF
 

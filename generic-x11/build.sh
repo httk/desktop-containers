@@ -9,11 +9,9 @@ RUN apt-get -y install xterm mesa-utils libx11-data x11-utils
 USER "$USER"
 EOF
 
-podman build -t wrap-generic-x11-img .
-
-WRAP_NAME="wrap-$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && basename "$(pwd -P)" )-img"
-podman build -t "wrap-${WRAP_NAME}-img" --label=wrap .
-echo "wrap-${WRAP_NAME}-img" > image.info
+NAME="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && basename "$(pwd -P)" )"
+podman build -t "wrap-${NAME}-img" --label=wrap .
+echo "wrap-${NAME}-img" > image.info
 mkdir -p home
 
 echo "Image built. Note, first execution may be very slow to start."

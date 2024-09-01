@@ -20,23 +20,16 @@ IMAGE_NAME="$(cat image.info)"
 NAME=${IMAGE_NAME%-img}
 NAME=${NAME#wrap-}
 
-podman run --rm \
+podman run --rm -it \
        -w "/home/$USER" \
        --hostname="$NAME" \
-       --user="$USER" \
        --cap-drop=ALL \
        --read-only \
        --read-only-tmpfs \
        --systemd=false \
        --security-opt=no-new-privileges \
        -e LANG \
-       -v /tmp/.X11-unix:/tmp/.X11-unix \
-       -e DISPLAY \
-       -v $XAUTHORITY:$XAUTHORITY \
-       -e XAUTHORITY \
-       -e vblank_mode \
        --userns=keep-id \
-       -v /dev/dri:/dev/dri \
        -v "$IMAGE_DIR/home:/home/$USER:rw" \
        $FIXES \
-       "$IMAGE_NAME" "$@"
+       "$IMAGE_NAME"

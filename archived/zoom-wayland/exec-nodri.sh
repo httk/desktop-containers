@@ -22,21 +22,19 @@ NAME=${NAME#wrap-}
 
 podman run --rm \
        -w "/home/$USER" \
-       --hostname="$NAME" \
        --user="$USER" \
+       --hostname="$NAME" \
        --cap-drop=ALL \
        --read-only \
        --read-only-tmpfs \
        --systemd=false \
        --security-opt=no-new-privileges \
        -e LANG \
-       -v /tmp/.X11-unix:/tmp/.X11-unix \
-       -e DISPLAY \
-       -v $XAUTHORITY:$XAUTHORITY \
-       -e XAUTHORITY \
-       -e vblank_mode \
-       --userns=keep-id \
-       -v /dev/dri:/dev/dri \
-       -v "$IMAGE_DIR/home:/home/$USER:rw" \
-       $FIXES \
-       "$IMAGE_NAME" "$@"
+	--userns=keep-id \
+	-e WAYLAND_DISPLAY \
+	-e XDG_RUNTIME_DIR=/tmp \
+	--userns=keep-id \
+	-v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$WAYLAND_DISPLAY:ro" \
+	-v "$IMAGE_DIR/home:/home/$USER:rw" \
+        $FIXES \
+        "$IMAGE_NAME" "$@"
