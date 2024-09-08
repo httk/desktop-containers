@@ -1,10 +1,12 @@
 #!/bin/bash
 
+set -e
+
 cat > Containerfile <<EOF
 FROM wrap-generic-wayland-img
 USER root
 RUN apt-get update && apt-get -y dist-upgrade
-RUN apt-get install -y falkon xdg-utils xdg-desktop-portal xdg-desktop-gnome
+RUN apt-get install -y falkon konsole xdg-utils xdg-desktop-portal xdg-desktop-portal-gnome firefox
 COPY Zoom.pubkey.pem /opt/zoom/Zoom.pubkey.pem
 RUN gpg --import /opt/zoom/Zoom.pubkey.pem
 USER "$USER"

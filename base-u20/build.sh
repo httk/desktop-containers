@@ -17,8 +17,7 @@ COPY en_SE.locale /tmp/en_SE.locale
 RUN test ! -e /usr/share/i18n/locales/en_SE && cp /tmp/en_SE.locale /usr/share/i18n/locales/en_SE && localedef -i en_SE -f UTF-8 en_SE.UTF-8 && echo "# en_SE.UTF-8 UTF-8" >> "/etc/locale.gen" && locale-gen ${LOCALES} && update-locale "LANG=$LANG"
 ENV LANG $LANG
 RUN groupadd -r -g 5000 build && useradd -m -u 5000 -g 5000 -c "Build user" "build"
-RUN groupadd -r -g "$UID" "$USER" && useradd -m -u "$UID" -g "$UID" -c "$FULLNAME" "$USER" && mkdir /tmp/$USER && chown "$USER:$USER" "/tmp/$USER" 
-&& chmod 0700 "/tmp/$USER"
+RUN groupadd -r -g "$UID" "$USER" && useradd -m -u "$UID" -g "$UID" -c "$FULLNAME" "$USER" && mkdir /tmp/$USER && chown "$USER:$USER" "/tmp/$USER" && chmod 0700 "/tmp/$USER"
 USER $USER
 EOF
 

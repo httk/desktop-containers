@@ -1,10 +1,12 @@
 #!/bin/bash
 
+set -e
+
 cat > Containerfile <<EOF
-FROM wrap-generic-x11-img
+FROM wrap-generic-xwayland-img
 USER root
 RUN apt-get update && apt-get -y dist-upgrade
-RUN apt-get install -y falkon xdg-utils libpipewire-0.3-0 libpipewire-0.3-common pipewire pipewire-bin xdg-desktop-portal xdg-desktop-portal-gnome xdg-desktop-portal-gtk 
+RUN apt-get install -y falkon xdg-utils 
 COPY Zoom.pubkey.pem /opt/zoom/Zoom.pubkey.pem
 RUN gpg --import /opt/zoom/Zoom.pubkey.pem
 USER "$USER"

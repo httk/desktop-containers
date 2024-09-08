@@ -32,4 +32,4 @@ podman run --rm -it \
        --userns=keep-id \
        -v "$IMAGE_DIR/home:/home/$USER:rw" \
        $FIXES \
-       "$IMAGE_NAME"
+       "$IMAGE_NAME" bash

@@ -1,14 +1,18 @@
-This container is a zoom container based on generic-xwayland.
-This container sets up an xwayland instance inside the container and connects it to the wayland display server running on your desktop.
+This container is (or is based on) generic-x11
+This container sets up a direct link to the x11 server running on your desktop.
 
-Security and screen sharing is a diffcult thing. Hence, this container
-exposes the Xwayland server inside the container to outside applications,
-which, if open there, can be screen-shared with others. To further
-facilitate this, a panel (vala-panel) is started which is running outside
-the container, but is displayed on the containers X-server. This panel
-thus allows you to further start applications on your host system
-which can then be screen shared with Zoom running in the container.
+Important: allowing x11 program direct access to the x11 server outside the container
+is not a good security barrier. At the very these programs can access all windows, run keyloggers, etc.
+There may be X11 extensions available that can allow programs running in the container to escape.
+(And even if not intentional, the many X11 extensions provide a large surface for attack.)
 
-Run with
-  ./exec-zoom.sh
+A better option is implemented in generic-xwayland, which runs an isolated xwayland server in
+the container that connects to a wayland server running on your desktop.
+
+Good tests:
+  vblank_mode=0 ./exec-nodri.sh glxgears
+  vblank_mode=0 ./exec-dri.sh glxgears
+
+To open a terminal inside the container use:
+  ./exec-nodri.sh xterm
 

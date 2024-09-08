@@ -2,6 +2,11 @@
 
 set -e
 
+if [ -z "$XDG_RUNTIME_DIR" -o -z "$USER" -o -z "$UID" -o -z "$LANG" ]; then
+    echo "The following env variables must be set: XDG_RUNTIME_DIR, USER, UID, LANG"
+    exit 1
+fi
+
 BASE="ubuntu:24.04"
 
 # The sed 's/.utf8/.UTF-8/' fixes incorrectly specified locales from pre-GNOME 3.18 I think.
@@ -14,7 +19,7 @@ RUN apt-get -y --no-install-recommends install locales nano wget bash curl git j
 COPY en_SE.locale /tmp/en_SE.locale
 RUN test ! -e /usr/share/i18n/locales/en_SE && cp /tmp/en_SE.locale /usr/share/i18n/locales/en_SE && localedef -i en_SE -f UTF-8 en_SE.UTF-8 && echo "# en_SE.UTF-8 UTF-8" >> "/etc/locale.gen" && locale-gen ${LOCALES} && update-locale "LANG=$LANG"
 ENV LANG $LANG
-RUN groupadd -r -g 5000 build && useradd -m -u 5000 -g 5000 -c "Build user" "build"
+RUN groupadd -r -g 5000 build && useradd -m -u 5000 -g 5000 -c "Build user" "build" && ln -s "/tmp/$USER/run" "$XDG_RUNTIME_DIR"
 EOF
 
 FULLNAME="$(getent passwd rar | awk -F':' '{print $5}')"
@@ -23,14 +28,14 @@ FULLNAME="$(getent passwd rar | awk -F':' '{print $5}')"
 if [ "$UID" == "1000" ]; then
 
     cat >> Containerfile <<EOF
-RUN usermod -l "$USER" ubuntu && groupmod -n "$USER" ubuntu && usermod -d "/home/$USER" -m "$USER" && usermod -c "$FULLNAME" "$USER" && mkdir /tmp/$USER && chown "$USER:$USER" "/tmp/$USER" && chmod 0700 "/tmp/$USER"
+RUN usermod -l "$USER" ubuntu && groupmod -n "$USER" ubuntu && usermod -d "/home/$USER" -m "$USER" && usermod -c "$FULLNAME" "$USER" && mkdir /tmp/$USER && chown "$USER:$USER" "/tmp/$USER" && chmod 0700 "/tmp/$USER" && mkdir "/tmp/$USER/run" && chown "$USER:$USER" "/tmp/$USER/run" && chmod 0700 "/tmp/$USER/run"
 USER $USER
 EOF
 
 else
 
     cat >> Containerfile <<EOF
-RUN groupadd -r -g "$UID" "$USER" && useradd -m -u "$UID" -g "$UID" -c "$FULLNAME" "$USER" && mkdir /tmp/$USER && chown "$USER:$USER" "/tmp/$USER" && chmod 0700 "/tmp/$USER"
+RUN groupadd -r -g "$UID" "$USER" && useradd -m -u "$UID" -g "$UID" -c "$FULLNAME" "$USER" && mkdir /tmp/$USER && chown "$USER:$USER" "/tmp/$USER" && chmod 0700 "/tmp/$USER" && mkdir "/tmp/$USER/run" && chown "$USER:$USER" "/tmp/$USER/run" && chmod 0700 "/tmp/$USER/run"
 USER $USER
 EOF
 
