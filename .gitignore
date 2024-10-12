@@ -1,7 +1,7 @@
 Containerfile
 home
-image.info
 *~
 OLD
 base/gamescope.tgz
 base/outputs
+images/fat-u24/files/gamescope.tgz
