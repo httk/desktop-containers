@@ -55,7 +55,7 @@ podman run --rm \
        build-gamescope bash -c "mkdir -p ~/build && cd ~/build && git clone https://github.com/ValveSoftware/gamescope.git && cd gamescope && git checkout 3.13.16.9 && git submodule update --init && meson build/ && ninja -C build/ && meson install -C build/ --skip-subprojects --destdir ~/install"
 
 podman rmi build-gamescope
-podman image prune -y
+podman image prune -f
 rm -rf outputs/build
 
 (cd outputs/install; tar -zcvf ../../files/gamescope.tgz .)
