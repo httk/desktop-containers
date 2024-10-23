@@ -1,5 +1,6 @@
 Containerfile
-home
+/*/home/*
+!/*/home/.gitignore
 *~
 OLD
 base/gamescope.tgz
