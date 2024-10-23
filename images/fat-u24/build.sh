@@ -28,8 +28,8 @@ COPY ./files/gamescope-on-vc /usr/local/bin/gamescope-on-vc
 RUN chmod +x /usr/bin/xwayland-exec /usr/bin/xwayland-wm-exec
 RUN mkdir -p /tmp/.X11-unix && chmod a+rwxt /tmp/.X11-unix
 RUN ln -s /opt/.X11-unix/X42 /tmp/.X11-unix/X42
-RUN test ! -e /usr/share/i18n/locales/en_SE && cp /tmp/en_SE.locale /usr/share/i18n/locales/en_SE && localedef -i en_SE -f UTF-8 en_SE.UTF-8
-RUN locale-gen && update-locale "LANG=$LANG"
+RUN test ! -e /usr/share/i18n/locales/en_SE && cp /tmp/en_SE.locale /usr/share/i18n/locales/en_SE && localedef -i en_SE -f UTF-8 en_SE.UTF-8 && echo "# en_SE.UTF-8 UTF-8" >> "/etc/locale.gen" && echo "en_SE.UTF-8 UTF-8" >> "/usr/share/i18n/SUPPORTED"
+RUN locale-gen ${LOCALES} && update-locale "LANG=$LANG"
 ENV LANG $LANG
 RUN groupadd -r -g 5000 build && useradd -m -u 5000 -g 5000 -c "Build user" "build" && ln -s "/tmp/$USER/run" "$XDG_RUNTIME_DIR"
 EOF
